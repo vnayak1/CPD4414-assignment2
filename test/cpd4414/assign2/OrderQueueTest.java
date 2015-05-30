@@ -107,6 +107,16 @@ public class OrderQueueTest {
             assertEquals(result, order);
             assertNull(result.getTimeProcessed());
         }
+        
+         @Test
+        public void testIfOrderNotAvailableThenNextIsNullException() throws OrderQueue.IfNoCustomer, OrderQueue.IfNoPurchase
+        {
+        OrderQueue orderqueue = new OrderQueue();
+        
+        Order result = orderqueue.nextOrder();
+            
+            assertNull(result);
+        }
     
 
 }
