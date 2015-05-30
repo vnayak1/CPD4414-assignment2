@@ -66,7 +66,7 @@ public class OrderQueueTest {
     }
 
     @Test
-    public void testNoCustomerException() throws OrderQueue.NoPurchaseException {
+    public void testIfNoCustomer() throws OrderQueue.IfNoPurchase {
         boolean newFlag = false;
         OrderQueue orderQueue = new OrderQueue();
         Order order = new Order("","");
@@ -74,24 +74,39 @@ public class OrderQueueTest {
         order.addPurchase(new Purchase("PROD0006", 250));
         try {
             orderQueue.add(order);
-        } catch (OrderQueue.NoCustomerException e) {
+        } catch (OrderQueue.IfNoCustomer e) {
             newFlag = true;
         }
         assertTrue(newFlag);
     }
     
         @Test
-        public void testNoPurchasesException() throws OrderQueue.NoCustomerException {
+        public void testIfNoPurchases() throws OrderQueue.IfNoCustomer {
         boolean newFlag = false;
         OrderQueue orderQueue = new OrderQueue();
         Order order = new Order("someNormal", "Order");
         try {
             orderQueue.add(order);
-        } catch (OrderQueue.NoPurchaseException e) {
+        } catch (OrderQueue.IfNoPurchase e) {
             newFlag = true;
         }
         assertTrue(newFlag);
     }
+        @Test
+        public void testIfOrderAvailableThenNextDisplayException() throws OrderQueue.IfNoCustomer, OrderQueue.IfNoPurchase
+        {
+        OrderQueue orderqueue = new OrderQueue();
+        Order order = new Order("SomeValues","OtherValues");
+        order.addPurchase(new Purchase("SomeId", 12));
+        orderqueue.add(order);
+        Order order_new = new Order("SomeValues","OtherValues");
+        order_new.addPurchase(new Purchase("SomeId", 12));
+        orderqueue.add(order_new);
+        
+        Order result = orderqueue.nextOrder();
+            assertEquals(result, order);
+            assertNull(result.getTimeProcessed());
+        }
     
 
 }
