@@ -56,8 +56,8 @@ public class OrderQueueTest {
     public void testWhenCustomerExistsAndPurchasesExistThenTimeReceivedIsNow() throws Exception {
         OrderQueue orderQueue = new OrderQueue();
         Order order = new Order("CUST00001", "ABC Cafeteria");
-        order.addPurchase(new Purchase("PROD0004", 450));
-        order.addPurchase(new Purchase("PROD0006", 250));
+        order.addPurchase(new Purchase(1, 8));
+        order.addPurchase(new Purchase(2, 4));
         orderQueue.add(order);
 
         long expResult = new Date().getTime();
@@ -70,8 +70,8 @@ public class OrderQueueTest {
         boolean newFlag = false;
         OrderQueue orderQueue = new OrderQueue();
         Order order = new Order("","");
-        order.addPurchase(new Purchase("PROD0004", 450));
-        order.addPurchase(new Purchase("PROD0006", 250));
+        order.addPurchase(new Purchase(1, 8));
+        order.addPurchase(new Purchase(2, 4));
         try {
             orderQueue.add(order);
         } catch (OrderQueue.IfNoCustomer e) {
@@ -97,10 +97,10 @@ public class OrderQueueTest {
         {
         OrderQueue orderqueue = new OrderQueue();
         Order order = new Order("SomeValues","OtherValues");
-        order.addPurchase(new Purchase("SomeId", 12));
+        order.addPurchase(new Purchase(1, 8));
         orderqueue.add(order);
         Order order_new = new Order("SomeValues","OtherValues");
-        order_new.addPurchase(new Purchase("SomeId", 12));
+        order_new.addPurchase(new Purchase(2, 4));
         orderqueue.add(order_new);
         
         Order result = orderqueue.nextOrder();
@@ -112,10 +112,31 @@ public class OrderQueueTest {
         public void testIfOrderNotAvailableThenNextIsNullException() throws OrderQueue.IfNoCustomer, OrderQueue.IfNoPurchase
         {
         OrderQueue orderqueue = new OrderQueue();
-        
         Order result = orderqueue.nextOrder();
             
             assertNull(result);
+        }
+        
+        @Test
+        public void testIfTimeReceivedSetThenResetToNow() throws OrderQueue.IfNoCustomer, OrderQueue.IfNoPurchase
+        {
+        OrderQueue orderqueue = new OrderQueue();
+        
+        Order order = new Order("SomeValues","OtherValues");
+        order.addPurchase(new Purchase(1, 8));
+        orderqueue.add(order);
+        Order order_new = new Order("SomeValues","OtherValues");
+        order_new.addPurchase(new Purchase(2, 4));
+        orderqueue.add(order_new);
+        
+        Order ordernext = orderqueue.nextOrder();
+        orderqueue.process(ordernext);
+         
+        long expResult = new Date().getTime();
+        long result = order.getTimeReceived().getTime();
+        assertTrue(Math.abs(result - expResult) < 1000);
+
+        
         }
     
 
