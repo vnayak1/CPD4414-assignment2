@@ -66,19 +66,32 @@ public class OrderQueueTest {
     }
 
     @Test
-    public void testNoCustomerException() {
+    public void testNoCustomerException() throws OrderQueue.NoPurchaseException {
         boolean newFlag = false;
         OrderQueue orderQueue = new OrderQueue();
-        Order order = new Order(null, null);
+        Order order = new Order("","");
         order.addPurchase(new Purchase("PROD0004", 450));
         order.addPurchase(new Purchase("PROD0006", 250));
         try {
             orderQueue.add(order);
-        } catch (Exception e) {
+        } catch (OrderQueue.NoCustomerException e) {
             newFlag = true;
         }
         assertTrue(newFlag);
-
     }
+    
+        @Test
+        public void testNoPurchasesException() throws OrderQueue.NoCustomerException {
+        boolean newFlag = false;
+        OrderQueue orderQueue = new OrderQueue();
+        Order order = new Order("someNormal", "Order");
+        try {
+            orderQueue.add(order);
+        } catch (OrderQueue.NoPurchaseException e) {
+            newFlag = true;
+        }
+        assertTrue(newFlag);
+    }
+    
 
 }
