@@ -69,6 +69,18 @@ public class OrderQueue {
 
     }
 
+    void methodfulfill(Order ordernext) throws EmptyTimeReceived, EmptyTimeprocessed {
+       
+        if(ordernext.getTimeReceived()==null){
+         throw new EmptyTimeReceived();
+        }        
+        if(ordernext.getTimeProcessed()==null){
+         throw new EmptyTimeprocessed();
+        }
+        if(ListOfOrder.contains(ordernext))
+            ordernext.setTimeFulfilled(new Date());
+    }
+
     public class IfNoCustomer extends Exception {
 
         public IfNoCustomer() {
@@ -88,4 +100,12 @@ public class OrderQueue {
       super(" Time received of this order is empty");
       }
     }
+    
+    public class EmptyTimeprocessed extends Exception
+    {
+      public EmptyTimeprocessed(){
+      super(" Time received of this order is empty");
+      }
+    }
 }
+    

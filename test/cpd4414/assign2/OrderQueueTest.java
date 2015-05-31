@@ -131,7 +131,7 @@ public class OrderQueueTest {
         Order ordernext = orderqueue.nextOrder();
         orderqueue.process(ordernext);         
         long expResult = new Date().getTime();
-        long result = order.getTimeReceived().getTime();
+        long result = order.getTimeProcessed().getTime();
         assertTrue(Math.abs(result - expResult) < 1000);        
         }
         
@@ -148,6 +148,64 @@ public class OrderQueueTest {
         orderqueue.process(order);
         }
         catch(OrderQueue.EmptyTimeReceived e){
+         newflag=true;
+        }
+            assertTrue(newflag);
+            
+        }
+        
+        @Test
+        public void testIfTimeReceivedSetThenTimeFullfiledToNow() throws OrderQueue.IfNoCustomer, OrderQueue.IfNoPurchase, OrderQueue.EmptyTimeReceived, OrderQueue.EmptyTimeprocessed
+        {
+        OrderQueue orderqueue = new OrderQueue();
+        
+        Order order = new Order("SomeValues","OtherValues");
+        order.addPurchase(new Purchase(1, 8));
+        orderqueue.add(order);
+        Order order_new = new Order("SomeValues","OtherValues");
+        order_new.addPurchase(new Purchase(2, 4));
+        orderqueue.add(order_new);        
+        Order ordernext = orderqueue.nextOrder();
+        orderqueue.process(ordernext); 
+        
+        orderqueue.methodfulfill(ordernext);
+        
+        long expResult = new Date().getTime();
+        long result = order.getTimeFulfilled().getTime();
+        assertTrue(Math.abs(result - expResult) < 1000);        
+        }
+        
+    @Test
+    public void testIfTimeReceivedNotSetThenThrowException() throws OrderQueue.IfNoCustomer, OrderQueue.IfNoPurchase, OrderQueue.EmptyTimeprocessed {
+        boolean newflag = false;
+        OrderQueue orderqueue = new OrderQueue();
+
+        Order order = new Order("SomeValues", "OtherValues");
+        order.addPurchase(new Purchase(1, 8));
+
+        try {
+            orderqueue.methodfulfill(order);
+        } catch (OrderQueue.EmptyTimeReceived e) {
+            newflag = true;
+        }
+        assertTrue(newflag);
+
+    }
+    
+         @Test
+        public void testIfTimeProcessedNotSetThenException() throws OrderQueue.IfNoCustomer, OrderQueue.IfNoPurchase, OrderQueue.EmptyTimeReceived
+        {
+            boolean newflag = false;
+        OrderQueue orderqueue = new OrderQueue();
+        
+        Order order = new Order("SomeValues","OtherValues");
+        order.addPurchase(new Purchase(1, 8));
+        orderqueue.add(order);
+        
+        try{
+        orderqueue.methodfulfill(order);
+        }   
+        catch(OrderQueue.EmptyTimeprocessed e){
          newflag=true;
         }
             assertTrue(newflag);
