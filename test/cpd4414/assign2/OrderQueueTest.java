@@ -277,7 +277,7 @@ public class OrderQueueTest {
 
                 String resultString = orderqueue.generateReport();
           
-                System.out.println(resultString);
+                
                 
               //  JSONObject newsetof = (JSONObject) JSONValue.parseWithException(expresult.toJSONString());
                 JSONObject result = (JSONObject) JSONValue.parseWithException(resultString);
