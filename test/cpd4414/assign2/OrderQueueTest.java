@@ -20,6 +20,10 @@ import cpd4414.assign2.OrderQueue;
 import cpd4414.assign2.Purchase;
 import cpd4414.assign2.Order;
 import java.util.Date;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+import org.json.simple.parser.ParseException;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.*;
@@ -210,6 +214,76 @@ public class OrderQueueTest {
         }
             assertTrue(newflag);
             
+        }
+        
+        @Test
+        public void testEmptyStringForNoOrderRepoert(){
+        
+        OrderQueue orderqueue = new OrderQueue();
+        String expresult ="";
+        String result = orderqueue.generateReport();
+            assertEquals(expresult, result);
+        
+        
+        
+        }
+        @Test
+        public void testGeneratereportByOrder() throws OrderQueue.IfNoCustomer, OrderQueue.IfNoPurchase, OrderQueue.EmptyTimeReceived, OrderQueue.EmptyTimeprocessed, ParseException{
+        
+        OrderQueue orderqueue = new OrderQueue();
+        
+        Order order = new Order("Cust1","Name1");
+        order.addPurchase(new Purchase(1, 8));
+        orderqueue.add(order);
+        Order order_new = new Order("Cust2","Name2");
+        order_new.addPurchase(new Purchase(2, 4));
+        orderqueue.add(order_new);        
+        Order ordernext = orderqueue.nextOrder();
+        orderqueue.process(ordernext); 
+        
+        orderqueue.methodfulfill(ordernext);
+        
+            JSONObject expresult = new JSONObject();
+            JSONArray orders = new JSONArray();
+            JSONObject o1 = new JSONObject();
+            o1.put("customerId", "Cust1");
+            o1.put("customerName","Name1");
+            o1.put("timeReceived", new Date().toString());
+            o1.put("timeProcessed",new Date().toString());
+            o1.put("timeFulfilled", new Date().toString());
+            JSONArray pList = new JSONArray();
+            JSONObject p1 = new JSONObject();
+            p1.put("ProductId", 1);
+            p1.put("quantity",8);
+            pList.add(p1);
+            o1.put("purchases", pList);
+            o1.put("notes",  null);
+            orders.add(o1);
+            JSONObject o2 = new JSONObject();
+            o2.put("customerId", "Cust2");
+            o2.put("customerName","Name2");
+            o2.put("timeReceived", new Date().toString());
+            o2.put("timeProcessed",null);
+            o2.put("timeFulfilled", null);
+            JSONArray pList1 = new JSONArray();
+            JSONObject p2 = new JSONObject();
+            p2.put("ProductId", 2);
+            p2.put("quantity",4);
+            pList1.add(p2);
+            o2.put("purchases", pList1);
+            o2.put("notes",  null);
+            orders.add(o2);
+            expresult.put("orders",orders);
+
+                String resultString = orderqueue.generateReport();
+          
+                System.out.println(resultString);
+                
+              //  JSONObject newsetof = (JSONObject) JSONValue.parseWithException(expresult.toJSONString());
+                JSONObject result = (JSONObject) JSONValue.parseWithException(resultString);
+                System.out.println(result);
+                assertEquals(expresult.toJSONString(),result.toJSONString()); 
+        
         }
     
 

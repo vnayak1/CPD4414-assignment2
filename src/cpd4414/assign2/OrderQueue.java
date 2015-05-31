@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Queue;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 /**
  *
@@ -79,6 +81,28 @@ public class OrderQueue {
         }
         if(ListOfOrder.contains(ordernext))
             ordernext.setTimeFulfilled(new Date());
+    }
+
+    String generateReport() {
+        String output = "";
+        if(!(orderQueue.isEmpty()&&ListOfOrder.isEmpty()))
+        {
+            JSONObject obj = new JSONObject();
+            JSONArray orders = new JSONArray();
+            
+            
+            for(Order o: ListOfOrder){
+            orders.add(o.tojsonconvert());
+            }
+            
+            for(Order o : orderQueue){
+            orders.add(o.tojsonconvert());
+            }
+            
+            obj.put("orders", orders);
+            output = obj.toJSONString();
+        }
+        return output;
     }
 
     public class IfNoCustomer extends Exception {
