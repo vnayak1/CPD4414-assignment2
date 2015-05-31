@@ -118,7 +118,7 @@ public class OrderQueueTest {
         }
         
         @Test
-        public void testIfTimeReceivedSetThenResetToNow() throws OrderQueue.IfNoCustomer, OrderQueue.IfNoPurchase
+        public void testIfTimeReceivedSetThenResetToNow() throws OrderQueue.IfNoCustomer, OrderQueue.IfNoPurchase, OrderQueue.EmptyTimeReceived
         {
         OrderQueue orderqueue = new OrderQueue();
         
@@ -127,16 +127,31 @@ public class OrderQueueTest {
         orderqueue.add(order);
         Order order_new = new Order("SomeValues","OtherValues");
         order_new.addPurchase(new Purchase(2, 4));
-        orderqueue.add(order_new);
-        
+        orderqueue.add(order_new);        
         Order ordernext = orderqueue.nextOrder();
-        orderqueue.process(ordernext);
-         
+        orderqueue.process(ordernext);         
         long expResult = new Date().getTime();
         long result = order.getTimeReceived().getTime();
-        assertTrue(Math.abs(result - expResult) < 1000);
-
+        assertTrue(Math.abs(result - expResult) < 1000);        
+        }
         
+        @Test
+        public void testIfTimeReceivedNotSetException() throws OrderQueue.IfNoCustomer, OrderQueue.IfNoPurchase
+        {
+            boolean newflag = false;
+        OrderQueue orderqueue = new OrderQueue();
+        
+        Order order = new Order("SomeValues","OtherValues");
+        order.addPurchase(new Purchase(1, 8));
+        
+        try{
+        orderqueue.process(order);
+        }
+        catch(OrderQueue.EmptyTimeReceived e){
+         newflag=true;
+        }
+            assertTrue(newflag);
+            
         }
     
 

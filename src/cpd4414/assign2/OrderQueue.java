@@ -48,7 +48,7 @@ public class OrderQueue {
         return orderQueue.peek();
     }
 
-    void process(Order ordernext) {
+    void process(Order ordernext) throws EmptyTimeReceived {
 
         if (ordernext.equals(nextOrder())) {
 
@@ -62,6 +62,9 @@ public class OrderQueue {
                 ListOfOrder.add(orderQueue.remove());
                 ordernext.setTimeProcessed(new Date());
    //         }
+        }
+        else if(ordernext.getTimeReceived() == null ){
+        throw new EmptyTimeReceived();
         }
 
     }
@@ -78,5 +81,11 @@ public class OrderQueue {
         public IfNoPurchase() {
             super("There is no purchase");
         }
+    }
+    public class EmptyTimeReceived extends Exception
+    {
+      public EmptyTimeReceived(){
+      super(" Time received of this order is empty");
+      }
     }
 }
